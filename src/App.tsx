@@ -1,10 +1,23 @@
-import LayoutPage from "./components/templates/LayoutPage";
+import { lazy, Suspense } from "react";
+import { Route, Routes } from "react-router-dom";
+
+const Home = lazy(() => import("@/pages/Home"));
 
 const App = () => {
   return (
-    <LayoutPage>
-      <p>Hello World</p>
-    </LayoutPage>
+    <Routes>
+      <Route path="/">
+        <Route
+          index
+          element={
+            <Suspense fallback={<div>Loading...</div>}>
+              <Home />
+            </Suspense>
+          }
+        />
+        <Route path="/kamus" element={<div>Kamus</div>} />
+      </Route>
+    </Routes>
   );
 };
 

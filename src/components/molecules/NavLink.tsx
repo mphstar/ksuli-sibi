@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 type NavLinkProps = {
   href: string;
@@ -8,7 +9,7 @@ type NavLinkProps = {
 
 const NavLink = ({ href, name, isActive }: NavLinkProps) => {
   return (
-    <a href={href}>
+    <Link to={href}>
       <li
         className={cn(
           "btn bg-transparent border-none",
@@ -17,7 +18,7 @@ const NavLink = ({ href, name, isActive }: NavLinkProps) => {
       >
         {name}
       </li>
-    </a>
+    </Link>
   );
 };
 

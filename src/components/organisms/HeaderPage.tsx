@@ -34,7 +34,7 @@ const HeaderPage = () => {
             <IoClose />
           </div>
           <NavLink href="/" name="Home" isActive={true} />
-          <NavLink href="/" name="Kamus" isActive={false} />
+          <NavLink href="/kamus" name="Kamus" isActive={false} />
           <NavLink href="/" name="Kuis" isActive={false} />
         </ul>
         <button
