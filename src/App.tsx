@@ -1,6 +1,11 @@
+import LayoutPage from "./components/templates/LayoutPage";
 
 const App = () => {
-  return <div>Hello World</div>;
+  return (
+    <LayoutPage>
+      <p>Hello World</p>
+    </LayoutPage>
+  );
 };
 
 export default App;
