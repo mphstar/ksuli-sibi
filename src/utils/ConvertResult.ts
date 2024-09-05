@@ -1,16 +1,32 @@
+const abjads = [
+  "A",
+  "B",
+  "C",
+  "D",
+  "E",
+  "F",
+  "G",
+  "H",
+  "I",
+  "K",
+  "L",
+  "M",
+  "N",
+  "O",
+  "P",
+  "Q",
+  "R",
+  "S",
+  "T",
+  "U",
+  "V",
+  "W",
+  "X",
+  "Y",
+];
+
 const ConvertResult = (result: number) => {
-  switch (result) {
-    case 0:
-      return "Abjad A";
-    case 1:
-      return "Abjad B";
-    case 2:
-      return "Abjad C";
-    case 3:
-      return "Abjad D";
-    default:
-      return "Unknown";
-  }
+  return `Abjad ${abjads[result]}`;
 };
 
 export default ConvertResult;
