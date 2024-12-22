@@ -6,6 +6,7 @@ import { FilesetResolver, HandLandmarker } from "@mediapipe/tasks-vision";
 import calcLandmarkList from "@/utils/CalculateLandmark";
 import preProcessLandmark from "@/utils/PreProcessLandmark";
 import ConvertResult from "@/utils/ConvertResult";
+import useNavbarStore from "@/stores/NavbarStore";
 
 type PredictResult = {
   abjad: String;
@@ -130,11 +131,19 @@ const Home = () => {
     requestAnimationFrame(detectHands);
   };
 
+  const store = useNavbarStore();
+
   useEffect(() => {
+    store.setNavSelected("home");
+
     loadModel();
     startWebcam();
 
     setLoadCamera(true);
+
+    return () => {
+      // stop camera
+    };
   }, []);
 
   return (

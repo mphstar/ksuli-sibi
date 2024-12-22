@@ -1,4 +1,4 @@
-const abjads = [
+export const abjads = [
   "A",
   "B",
   "C",
