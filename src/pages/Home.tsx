@@ -108,28 +108,6 @@ const Home = () => {
     prediction.dispose();
   };
 
-  const drawLandmarks = (landmarks: any[]) => {
-    if (!canvasRef.current) return;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-
-    if (ctx) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "red";
-
-      landmarks.forEach((landmark) => {
-        ctx.beginPath();
-        ctx.arc(
-          landmark.x * canvas.width,
-          landmark.y * canvas.height,
-          2,
-          0,
-          2 * Math.PI
-        );
-        ctx.fill();
-      });
-    }
-  };
 
   const detectHands = async () => {
     if (videoRef.current && videoRef.current.readyState >= 2) {
@@ -149,8 +127,6 @@ const Home = () => {
 
             const calt = calcLandmarkList(videoRef.current, landm);
             const finalResult = preProcessLandmark(calt);
-
-            // drawLandmarks(landm);
 
             makePrediction(finalResult);
           } else {
