@@ -16,6 +16,7 @@ type PredictResult = {
 const Home = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [loadCamera, setLoadCamera] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [resultPredict, setResultPredict] = useState<PredictResult>({
     abjad: "",
@@ -107,6 +108,29 @@ const Home = () => {
     prediction.dispose();
   };
 
+  const drawLandmarks = (landmarks: any[]) => {
+    if (!canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "red";
+
+      landmarks.forEach((landmark) => {
+        ctx.beginPath();
+        ctx.arc(
+          landmark.x * canvas.width,
+          landmark.y * canvas.height,
+          2,
+          0,
+          2 * Math.PI
+        );
+        ctx.fill();
+      });
+    }
+  };
+
   const detectHands = async () => {
     if (videoRef.current && videoRef.current.readyState >= 2) {
       const detections = handLandmarker.detectForVideo(
@@ -115,16 +139,23 @@ const Home = () => {
       );
 
       setHandPresence(detections.handedness.length > 0);
-
       // Assuming detections.landmarks is an array of landmark objects
       if (detections.landmarks) {
         if (detections.handednesses.length > 0) {
-          const landm = detections.landmarks[0].map((landmark) => landmark);
+          console.log(detections);
 
-          const calt = calcLandmarkList(videoRef.current, landm);
-          const finalResult = preProcessLandmark(calt);
+          if (detections.handednesses[0][0].displayName === "Right") {
+            const landm = detections.landmarks[0].map((landmark) => landmark);
 
-          makePrediction(finalResult);
+            const calt = calcLandmarkList(videoRef.current, landm);
+            const finalResult = preProcessLandmark(calt);
+
+            // drawLandmarks(landm);
+
+            makePrediction(finalResult);
+          } else {
+            setHandPresence(false);
+          }
         }
       }
     }
@@ -142,7 +173,9 @@ const Home = () => {
     setLoadCamera(true);
 
     return () => {
-      // stop camera
+      if (handLandmarker) {
+        handLandmarker.close();
+      }
     };
   }, []);
 
@@ -159,6 +192,10 @@ const Home = () => {
                 </h1>
               </div>
             )}
+            <canvas
+              ref={canvasRef}
+              className="absolute top-0 left-0 w-full h-full z-20"
+            />
             <video
               ref={videoRef}
               className="w-full max-h-[80svh] object-cover"
