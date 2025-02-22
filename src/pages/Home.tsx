@@ -58,10 +58,12 @@ const Home = () => {
 
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        mediapipeHelper = new MediapipeHelper(videoRef);
-        detectionHelper = new DetectionHelper();
+
         console.log("Camera access granted and helpers initialized.");
       }
+
+      mediapipeHelper = new MediapipeHelper(videoRef);
+      detectionHelper = new DetectionHelper();
 
       setLoadCamera(true);
       onHandDetected();
@@ -79,9 +81,7 @@ const Home = () => {
 
     startWebcam();
 
-    return () => {
-      
-    };
+    return () => {};
   }, []);
 
   return (
