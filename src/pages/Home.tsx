@@ -51,18 +51,19 @@ const Home = () => {
 
   const startWebcam = async () => {
     try {
+      console.log("Requesting camera access...");
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
       });
-
-      setLoadCamera(true);
 
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         mediapipeHelper = new MediapipeHelper(videoRef);
         detectionHelper = new DetectionHelper();
+        console.log("Camera access granted and helpers initialized.");
       }
 
+      setLoadCamera(true);
       onHandDetected();
     } catch (error) {
       console.error("Error accessing webcam:", error);
