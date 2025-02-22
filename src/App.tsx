@@ -1,29 +1,22 @@
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
-import Kamus from "./pages/Kamus";
-
-const Home = lazy(() => import("@/pages/Home"));
+import myRoute from "./routes/routes";
 
 const App = () => {
   return (
     <Routes>
       <Route path="/">
-        <Route
-          index
-          element={
-            <Suspense fallback={<div>Loading...</div>}>
-              <Home />
-            </Suspense>
-          }
-        />
-        <Route
-          path="/kamus"
-          element={
-            <Suspense fallback={<div>Loading...</div>}>
-              <Kamus />
-            </Suspense>
-          }
-        />
+        {myRoute.map((route, index) => (
+          <Route
+            key={index}
+            path={route.path}
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <route.component />
+              </Suspense>
+            }
+          />
+        ))}
       </Route>
     </Routes>
   );

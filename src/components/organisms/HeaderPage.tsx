@@ -17,7 +17,7 @@ const HeaderPage = () => {
           />
           <div className="form-control">
             <h1 className="font-semibold">K-SULI</h1>
-            <p className="text-gray-600">Kedai Susu Tuli</p>
+            <p className="text-primary">Kedai Susu Tuli</p>
           </div>
         </div>
         <ul
@@ -44,7 +44,7 @@ const HeaderPage = () => {
             isActive={navStore.navSelected === "kamus"}
           />
           <NavLink
-            href="/"
+            href="/kuis"
             name="Kuis"
             isActive={navStore.navSelected === "kuis"}
           />
