@@ -62,8 +62,8 @@ const Home = () => {
         console.log("Camera access granted and helpers initialized.");
       }
 
-      mediapipeHelper = new MediapipeHelper(videoRef);
-      detectionHelper = new DetectionHelper();
+      // mediapipeHelper = new MediapipeHelper(videoRef);
+      // detectionHelper = new DetectionHelper();
 
       setLoadCamera(true);
       // onHandDetected();
