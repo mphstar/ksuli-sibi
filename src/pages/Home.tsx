@@ -66,7 +66,7 @@ const Home = () => {
       detectionHelper = new DetectionHelper();
 
       setLoadCamera(true);
-      onHandDetected();
+      // onHandDetected();
     } catch (error) {
       console.error("Error accessing webcam:", error);
     }
