@@ -4,7 +4,6 @@ import { FaCircleCheck } from "react-icons/fa6";
 import useNavbarStore from "@/stores/NavbarStore";
 import MediapipeHelper from "@/helper/MediapipeHelper";
 import DetectionHelper from "@/helper/DetectionHelper";
-import MyLoading from "@/components/organisms/MyLoading";
 
 type PredictResult = {
   abjad: String;
