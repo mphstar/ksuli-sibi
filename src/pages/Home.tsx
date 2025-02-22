@@ -80,13 +80,7 @@ const Home = () => {
     startWebcam();
 
     return () => {
-      if (videoRef.current) {
-        (videoRef.current.srcObject as MediaStream)
-          ?.getTracks()
-          .forEach((track) => {
-            track.stop();
-          });
-      }
+      
     };
   }, []);
 
