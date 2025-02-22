@@ -42,13 +42,13 @@ class MediapipeHelper {
 
   detectHands = async () => {
     if (this.videoRef.current === null) {
-      console.error("Video is not initialized.");
+    //   console.error("Video is not initialized.");
       return;
     }
 
     if (this.videoRef && this.videoRef.current.readyState >= 2) {
       if (!this.handLandmarker) {
-        console.error("HandLandmarker is not initialized.");
+        // console.error("HandLandmarker is not initialized.");
         return;
       }
       const detections = this.handLandmarker.detectForVideo(
@@ -86,7 +86,6 @@ class MediapipeHelper {
       }
       
     }
-    requestAnimationFrame(this.detectHands);
   };
 }
 

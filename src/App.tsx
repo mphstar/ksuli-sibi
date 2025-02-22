@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import myRoute from "./routes/routes";
+import MyLoading from "./components/organisms/MyLoading";
 
 const App = () => {
   return (
@@ -11,7 +12,7 @@ const App = () => {
             key={index}
             path={route.path}
             element={
-              <Suspense fallback={<div>Loading...</div>}>
+              <Suspense fallback={<MyLoading />}>
                 <route.component />
               </Suspense>
             }

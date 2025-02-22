@@ -8,7 +8,7 @@ const HeaderPage = () => {
   const navStore = useNavbarStore();
   return (
     <div className="bg-white drop-shadow w-full h-fit sticky top-0 z-[300]">
-      <header className="flex flex-row items-center gap-2 justify-between px-4 py-3 container max-w-[1200px]">
+      <header className="flex flex-row items-center gap-2 justify-between px-4 py-3 container max-w-[960px]">
         <div className="flex gap-1 items-center">
           <img
             className="w-10"
@@ -17,7 +17,7 @@ const HeaderPage = () => {
           />
           <div className="form-control">
             <h1 className="font-semibold">K-SULI</h1>
-            <p className="text-primary">Kedai Susu Tuli</p>
+            <p className="text-primary text-sm">Kedai Susu Tuli</p>
           </div>
         </div>
         <ul

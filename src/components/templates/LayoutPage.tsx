@@ -4,9 +4,9 @@ import FooterPage from "../organisms/FooterPage";
 
 const LayoutPage = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="flex flex-col min-h-svh bg-ground">
+    <div className="flex flex-col min-h-svh bg-white font-poppins">
       <HeaderPage />
-      <main className="flex flex-col flex-1 container max-w-[1200px]">
+      <main className="flex flex-col flex-1 container max-w-[960px]">
         {children}
       </main>
       <FooterPage />

@@ -4,6 +4,7 @@ import { FaCircleCheck } from "react-icons/fa6";
 import useNavbarStore from "@/stores/NavbarStore";
 import MediapipeHelper from "@/helper/MediapipeHelper";
 import DetectionHelper from "@/helper/DetectionHelper";
+import MyLoading from "@/components/organisms/MyLoading";
 
 type PredictResult = {
   abjad: String;
@@ -23,13 +24,18 @@ const Home = () => {
   const [handPresence, setHandPresence] = useState(false);
 
   const onHandDetected = async () => {
+    if (!mediapipeHelper || !detectionHelper) {
+      return;
+    }
+
+    mediapipeHelper.detectHands();
+
     const result = mediapipeHelper.getResult();
     if (result.handPresence) {
       // console.log("Hand Detected");
       setHandPresence(true);
 
       const predict = await detectionHelper.makePrediction(result.finalResult);
-      console.log(predict);
 
       if (predict) {
         setResultPredict((prevState) => ({
@@ -37,7 +43,6 @@ const Home = () => {
           ...predict,
         }));
       }
-      
     } else {
       setHandPresence(false);
     }
@@ -51,25 +56,20 @@ const Home = () => {
         video: true,
       });
 
+      setLoadCamera(true);
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        mediapipeHelper = new MediapipeHelper(videoRef);
+        detectionHelper = new DetectionHelper();
       }
 
-      mediapipeHelper = new MediapipeHelper(videoRef);
-      detectionHelper = new DetectionHelper();
-
       onHandDetected();
-      
-      
-      
     } catch (error) {
       console.error("Error accessing webcam:", error);
     }
-
-    
   };
 
-  
   const store = useNavbarStore();
   let mediapipeHelper: MediapipeHelper;
   let detectionHelper: DetectionHelper;
@@ -79,12 +79,14 @@ const Home = () => {
 
     startWebcam();
 
-    setLoadCamera(true);
-
-    
-
     return () => {
-     
+      if (videoRef.current) {
+        (videoRef.current.srcObject as MediaStream)
+          ?.getTracks()
+          .forEach((track) => {
+            track.stop();
+          });
+      }
     };
   }, []);
 
@@ -113,7 +115,10 @@ const Home = () => {
             ></video>
           </div>
         ) : (
-          <div>Loading...</div>
+          <div className="flex flex-col items-center justify-center flex-1">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-primary"></div>
+            <p className="mt-4 text-lg text-gray-700">Loading...</p>
+          </div>
         )}
       </div>
     </LayoutPage>
