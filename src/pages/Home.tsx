@@ -1,9 +1,12 @@
 import LayoutPage from "@/components/templates/LayoutPage";
 import { useEffect, useRef, useState } from "react";
 import { FaCircleCheck } from "react-icons/fa6";
+import * as tf from "@tensorflow/tfjs";
+import { FilesetResolver, HandLandmarker } from "@mediapipe/tasks-vision";
+import calcLandmarkList from "@/utils/CalculateLandmark";
+import preProcessLandmark from "@/utils/PreProcessLandmark";
+import ConvertResult from "@/utils/ConvertResult";
 import useNavbarStore from "@/stores/NavbarStore";
-import MediapipeHelper from "@/helper/MediapipeHelper";
-import DetectionHelper from "@/helper/DetectionHelper";
 
 type PredictResult = {
   abjad: String;
@@ -20,68 +23,135 @@ const Home = () => {
     acc: "",
   });
 
+  let model: tf.LayersModel;
+  let handLandmarker: HandLandmarker;
+
   const [handPresence, setHandPresence] = useState(false);
-
-  const onHandDetected = async () => {
-    if (!mediapipeHelper || !detectionHelper) {
-      return;
-    }
-
-    mediapipeHelper.detectHands();
-
-    const result = mediapipeHelper.getResult();
-    if (result.handPresence) {
-      // console.log("Hand Detected");
-      setHandPresence(true);
-
-      const predict = await detectionHelper.makePrediction(result.finalResult);
-
-      if (predict) {
-        setResultPredict((prevState) => ({
-          ...prevState,
-          ...predict,
-        }));
-      }
-    } else {
-      setHandPresence(false);
-    }
-
-    requestAnimationFrame(onHandDetected);
-  };
 
   const startWebcam = async () => {
     try {
-      console.log("Requesting camera access...");
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
       });
 
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-
-        console.log("Camera access granted and helpers initialized.");
       }
 
-      // mediapipeHelper = new MediapipeHelper(videoRef);
-      // detectionHelper = new DetectionHelper();
-
-      setLoadCamera(true);
-      // onHandDetected();
+      //   setLoadCamera(true);
+      await initializeHandDetection();
     } catch (error) {
       console.error("Error accessing webcam:", error);
     }
   };
 
+  const loadModel = async () => {
+    setLoadCamera(false);
+    try {
+      const lm = await tf.loadLayersModel("/model/model.json");
+      model = lm;
+
+      const emptyInput = tf.tensor2d([[0, 0]]);
+
+      model.predict(emptyInput) as tf.Tensor;
+
+      setLoadCamera(true);
+    } catch (error) {
+      //   console.error("Error loading model:", error);
+    }
+  };
+
+  const initializeHandDetection = async () => {
+    try {
+      const vision = await FilesetResolver.forVisionTasks(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
+      );
+      handLandmarker = await HandLandmarker.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+        },
+        numHands: 2,
+        runningMode: "VIDEO",
+      });
+
+      detectHands();
+    } catch (error) {
+      console.error("Error initializing hand detection:", error);
+    }
+  };
+
+  const makePrediction = async (finalResult: any) => {
+    const input = tf.tensor2d([finalResult]);
+
+    // Melakukan prediksi
+    const prediction = model.predict(input) as tf.Tensor;
+
+    const result = prediction.dataSync();
+
+    const maxEntry = Object.entries(result).reduce((max, entry) => {
+      const [, value] = entry;
+      return value > max[1] ? entry : max;
+    });
+
+    // maxEntry sekarang berisi [key, value] dengan nilai terbesar
+    const [maxKey, maxValue] = maxEntry;
+
+    const percentageValue = (maxValue * 100).toFixed(2) + "%";
+
+    setResultPredict({
+      abjad: ConvertResult(parseInt(maxKey)),
+      acc: percentageValue,
+    });
+
+    // Hapus tensor
+    input.dispose();
+    prediction.dispose();
+  };
+
+  const detectHands = async () => {
+    if (videoRef.current && videoRef.current.readyState >= 2) {
+      const detections = handLandmarker.detectForVideo(
+        videoRef.current,
+        performance.now()
+      );
+
+      setHandPresence(detections.handedness.length > 0);
+      // Assuming detections.landmarks is an array of landmark objects
+      if (detections.landmarks) {
+        if (detections.handednesses.length > 0) {
+          console.log(detections);
+
+          if (detections.handednesses[0][0].displayName === "Right") {
+            const landm = detections.landmarks[0].map((landmark) => landmark);
+
+            const calt = calcLandmarkList(videoRef.current, landm);
+            const finalResult = preProcessLandmark(calt);
+
+            makePrediction(finalResult);
+          } else {
+            setHandPresence(false);
+          }
+        }
+      }
+    }
+    requestAnimationFrame(detectHands);
+  };
+
   const store = useNavbarStore();
-  let mediapipeHelper: MediapipeHelper;
-  let detectionHelper: DetectionHelper;
 
   useEffect(() => {
     store.setNavSelected("home");
 
+    loadModel();
     startWebcam();
 
-    return () => {};
+    setLoadCamera(true);
+
+    return () => {
+      if (handLandmarker) {
+        handLandmarker.close();
+      }
+    };
   }, []);
 
   return (

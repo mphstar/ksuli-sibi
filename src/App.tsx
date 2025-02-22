@@ -9,6 +9,7 @@ const App = () => {
       <Route path="/">
         {myRoute.map((route, index) => (
           <Route
+            index={route.path == '/'}
             key={index}
             path={route.path}
             element={
