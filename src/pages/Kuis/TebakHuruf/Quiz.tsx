@@ -1,27 +1,30 @@
 import LayoutPage from "@/components/templates/LayoutPage";
 import { useEffect, useRef, useState } from "react";
-import { FaCircleCheck } from "react-icons/fa6";
 import * as tf from "@tensorflow/tfjs";
 import { FilesetResolver, HandLandmarker } from "@mediapipe/tasks-vision";
 import calcLandmarkList from "@/utils/CalculateLandmark";
 import preProcessLandmark from "@/utils/PreProcessLandmark";
 import ConvertResult from "@/utils/ConvertResult";
 import useNavbarStore from "@/stores/NavbarStore";
+import ProgressBar from "@/components/molecules/ProgressBar";
+import { MdOutlineQuiz } from "react-icons/md";
 
-type PredictResult = {
-  abjad: String;
-  acc: String;
-};
+// type PredictResult = {
+//   abjad: String;
+//   acc: String;
+// };
 
-const Home = () => {
+const Quiz = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [loadCamera, setLoadCamera] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [resultPredict, setResultPredict] = useState<PredictResult>({
-    abjad: "",
-    acc: "",
-  });
+  // const [setResultPredict] = useState<PredictResult>({
+  //   abjad: "",
+  //   acc: "",
+  // });
+
+  const [showAnswer, setShowAnswer] = useState(false);
 
   let model: tf.LayersModel;
   let handLandmarker: HandLandmarker;
@@ -37,6 +40,7 @@ const Home = () => {
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
+
       setLoadCamera(true);
 
       //   setLoadCamera(true);
@@ -81,6 +85,9 @@ const Home = () => {
     }
   };
 
+  let previousResult: string[] = [];
+  const [progress, setProgress] = useState(0);
+
   const makePrediction = async (finalResult: any) => {
     const input = tf.tensor2d([finalResult]);
 
@@ -95,21 +102,51 @@ const Home = () => {
     });
 
     // maxEntry sekarang berisi [key, value] dengan nilai terbesar
-    const [maxKey, maxValue] = maxEntry;
+    const [maxKey] = maxEntry;
 
-    const percentageValue = (maxValue * 100).toFixed(2) + "%";
+    // const percentageValue = (maxValue * 100).toFixed(2) + "%";
 
-    setResultPredict({
-      abjad: ConvertResult(parseInt(maxKey)),
-      acc: percentageValue,
-    });
+    // setResultPredict({
+    //   abjad: ConvertResult(parseInt(maxKey)),
+    //   acc: percentageValue,
+    // });
+
+    let currentResult = ConvertResult(parseInt(maxKey));
 
     // Hapus tensor
     input.dispose();
     prediction.dispose();
+
+    if (
+      previousResult.length > 0 &&
+      previousResult[previousResult.length - 1] === currentResult
+    ) {
+      previousResult.push(currentResult);
+      setProgress((prev) => prev + 10);
+    } else {
+      previousResult = [currentResult];
+      setProgress(10);
+    }
+
+    if (previousResult.length == 11) {
+      setShowAnswer(true);
+
+      previousResult = [];
+      setProgress(0);
+
+      setTimeout(() => {
+        setShowAnswer(false);
+      }, 2000);
+    }
+
+    // console.log(previousResult);
   };
 
   const detectHands = async () => {
+    if (showAnswer) {
+      return;
+    }
+
     if (videoRef.current && videoRef.current.readyState >= 2) {
       const detections = handLandmarker.detectForVideo(
         videoRef.current,
@@ -120,7 +157,7 @@ const Home = () => {
       // Assuming detections.landmarks is an array of landmark objects
       if (detections.landmarks) {
         if (detections.handednesses.length > 0) {
-          console.log(detections);
+          // console.log(detections);
 
           if (detections.handednesses[0][0].displayName === "Right") {
             const landm = detections.landmarks[0].map((landmark) => landmark);
@@ -131,7 +168,12 @@ const Home = () => {
             makePrediction(finalResult);
           } else {
             setHandPresence(false);
+            setProgress(0);
+            previousResult = [];
           }
+        } else {
+          setProgress(0);
+          previousResult = [];
         }
       }
     }
@@ -141,12 +183,10 @@ const Home = () => {
   const store = useNavbarStore();
 
   useEffect(() => {
-    store.setNavSelected("home");
+    store.setNavSelected("kuis");
 
     loadModel();
     startWebcam();
-
-    
 
     return () => {
       if (handLandmarker) {
@@ -157,15 +197,48 @@ const Home = () => {
 
   return (
     <LayoutPage>
+      <div
+        className={`fixed inset-0 w-screen h-screen bg-black/60 ${
+          showAnswer ? "opacity-100" : "opacity-0"
+        }  z-[999] flex items-center justify-center pointer-events-none duration-300 ease-in-out`}
+      >
+        <div className="rounded-md px-3 py-2 text-white flex flex-col justify-center items-center gap-3">
+          <img
+            className="h-56"
+            src="/assets/gif/salah.gif"
+            alt="Jawaban Salah"
+          />
+          <p className="text-center text-6xl font-bold">A</p>
+          <h1 className="text-2xl font-semibold text-center">
+            Jawaban kamu Salah
+          </h1>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2 mt-4">
+        <MdOutlineQuiz size={18} />
+        <h1 className="text-xl font-semibold">Soal: 1 / 10</h1>
+      </div>
+
       <div className="flex flex-col flex-1 py-4">
         {loadCamera ? (
           <div className="rounded-md overflow-hidden relative">
-            {handPresence && (
+            {!showAnswer && (
               <div className="top-6 left-6 absolute flex gap-2 items-center bg-white text-black rounded-md drop-shadow px-3 py-2">
-                <FaCircleCheck className="text-green-500" />
                 <h1 className="text-2xl font-semibold text-center">
-                  {resultPredict.abjad} ({resultPredict.acc})
+                  Tebak Huruf K
                 </h1>
+              </div>
+            )}
+            {handPresence && !showAnswer && (
+              <div className="top-6 right-6 absolute flex gap-2 items-center bg-white text-black rounded-md drop-shadow px-3 py-2 w-fit">
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className="loader"></span>
+                    <h1>Tahan Tangan..</h1>
+                  </div>
+                  <ProgressBar progress={progress} />
+                </div>
               </div>
             )}
             <canvas
@@ -190,4 +263,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Quiz;
