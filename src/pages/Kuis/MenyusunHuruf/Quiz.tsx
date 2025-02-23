@@ -51,7 +51,7 @@ const Quiz = () => {
         videoRef.current.srcObject = stream;
       }
 
-      setLoadCamera(true);
+      
 
       //   setLoadCamera(true);
       await initializeHandDetection();
@@ -237,6 +237,8 @@ const Quiz = () => {
 
     loadModel();
     startWebcam();
+
+    setLoadCamera(true);
 
     return () => {
       if (handLandmarker) {

@@ -37,7 +37,7 @@ const Home = () => {
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
-      setLoadCamera(true);
+      
 
       //   setLoadCamera(true);
       await initializeHandDetection();
@@ -146,6 +146,7 @@ const Home = () => {
     loadModel();
     startWebcam();
 
+    setLoadCamera(true);
     
 
     return () => {
