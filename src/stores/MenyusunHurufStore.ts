@@ -6,11 +6,11 @@ const soal = [
   "SIBI",
   "MAHASISWA",
   "KSULI",
-  "INFORMATIKA",
-  "CODING",
-  "WHATSAPP",
-  "INSTAGRAM",
-  "TEMAN",
+  // "INFORMATIKA",
+  // "CODING",
+  // "WHATSAPP",
+  // "INSTAGRAM",
+  // "TEMAN",
 ];
 
 type MenyusunHurufType = {
@@ -22,6 +22,10 @@ type MenyusunHurufType = {
   setTime: (time: number) => void;
   session: boolean;
   setSession: (session: boolean) => void;
+  name: string;
+  setName: (name: string) => void;
+  isFinish: boolean;
+  setIsFinish: (isFinish: boolean) => void;
 };
 
 const useMenyusunHurufStore = create<MenyusunHurufType>((set) => ({
@@ -33,6 +37,10 @@ const useMenyusunHurufStore = create<MenyusunHurufType>((set) => ({
   setTime: (time) => set({ time: time }),
   session: false,
   setSession: (session) => set({ session: session }),
+  name: "",
+  setName: (name) => set({ name: name }),
+  isFinish: false,
+  setIsFinish: (isFinish) => set({ isFinish: isFinish }),
 }));
 
 export default useMenyusunHurufStore;

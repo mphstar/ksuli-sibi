@@ -10,6 +10,7 @@ import ProgressBar from "@/components/molecules/ProgressBar";
 import { MdOutlineQuiz } from "react-icons/md";
 import useMenyusunHurufStore from "@/stores/MenyusunHurufStore";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 // type PredictResult = {
 //   abjad: String;
@@ -50,8 +51,6 @@ const Quiz = () => {
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
-
-      
 
       //   setLoadCamera(true);
       await initializeHandDetection();
@@ -171,26 +170,63 @@ const Quiz = () => {
       tempAnswer = "";
       setAnswer("");
 
-      setTimeout(() => {
+      setTimeout(async () => {
         setShowAnswer(false);
         setResultAnswer({
           minutes: 0,
           seconds: 0,
         });
+
+        quizStore.setSoalIndex(noSoal + 1);
+
+        answerTime = answerTime += elapsedTime;
+
+        noSoal++;
+
+        if (noSoal === quizStore.listSoal.length) {
+          quizStore.setTime(answerTime);
+          quizStore.setSession(false);
+          quizStore.setIsFinish(true);
+
+          Swal.fire({
+            title: "Loading",
+            text: "Proses menyimpan data...",
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            },
+          });
+          await saveData(parseInt(answerTime.toString()));
+
+          navigate("/kuis/menyusun-huruf/");
+        }
       }, 3000);
+    }
+  };
 
-      quizStore.setSoalIndex(noSoal + 1);
+  const saveData = async (time: number) => {
+    try {
+      await fetch("https://ksuli-api.deno.dev/proses-kuis", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer KSULI_TOKEN_321`,
+        },
+        body: JSON.stringify({
+          kategori_id: "rec_cuum7c5qrj60bgubcjog",
+          person_name: quizStore.name,
+          score: time,
+        }),
+      });
 
-      answerTime = answerTime += elapsedTime;
-
-      noSoal++;
-
-      if (noSoal === 10) {
-        quizStore.setTime(answerTime);
-        quizStore.setSession(false);
-
-        navigate("/kuis/menyusun-huruf/");
-      }
+      Swal.close();
+    } catch (error) {
+      console.error("Error saving data:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong while saving your data!",
+      });
     }
   };
 
@@ -270,7 +306,7 @@ const Quiz = () => {
       <div className="flex items-center gap-2 mt-4">
         <MdOutlineQuiz size={18} />
         <h1 className="text-xl font-semibold">
-          Soal: {quizStore.soalIndex + 1} / 10
+          Soal: {quizStore.soalIndex + 1} / {quizStore.listSoal.length}
         </h1>
       </div>
 

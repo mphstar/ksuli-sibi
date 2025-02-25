@@ -1,6 +1,8 @@
 import LayoutPage from "@/components/templates/LayoutPage";
 import useMenyusunHurufStore from "@/stores/MenyusunHurufStore";
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const MenyusunHuruf = () => {
   const quizStore = useMenyusunHurufStore();
@@ -11,6 +13,33 @@ const MenyusunHuruf = () => {
       [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
+  };
+
+  const router = useNavigate();
+
+  useEffect(() => {
+    if (quizStore.isFinish) {
+      Swal.fire({
+        icon: "success",
+        title: "Kuis telah selesai",
+        text: `Anda menyelesaikan kuis dalam waktu ${quizStore.time} detik`,
+      });
+    }
+  }, [quizStore.isFinish]);
+
+  const ProsesKuis = () => {
+    if (quizStore.name === "") {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Isi nama terlebih dahulu",
+      });
+      return;
+    }
+
+    quizStore.setListSoal(shuffleArray(quizStore.listSoal));
+    quizStore.setSession(true);
+    router("/kuis/menyusun-huruf/app");
   };
 
   return (
@@ -36,19 +65,18 @@ const MenyusunHuruf = () => {
               <input
                 placeholder="Name.."
                 type="text"
+                value={quizStore.name}
+                onChange={(e) => quizStore.setName(e.target.value)}
                 className="bg-transparent outline-none p-2 px-8 flex-1 w-full"
               />
-              <Link to="/kuis/menyusun-huruf/app">
-                <button
-                  onClick={() => {
-                    quizStore.setListSoal(shuffleArray(quizStore.listSoal));
-                    quizStore.setSession(true)
-                  }}
-                  className="bg-blue-500 hover:bg-blue-700 text-white px-3 py-2 rounded-full whitespace-nowrap"
-                >
-                  Mulai Kuis
-                </button>
-              </Link>
+              <button
+                onClick={() => {
+                  ProsesKuis();
+                }}
+                className="bg-blue-500 hover:bg-blue-700 text-white px-3 py-2 rounded-full whitespace-nowrap"
+              >
+                Mulai Kuis
+              </button>
             </div>
             <span className="text-primary">Lihat Ranking</span>
           </div>
