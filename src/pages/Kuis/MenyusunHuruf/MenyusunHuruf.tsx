@@ -79,7 +79,7 @@ const MenyusunHuruf = () => {
     router("/kuis/menyusun-huruf/app");
   };
 
-  const [showDialog, setShowDialog] = useState(true);
+  const [showDialog, setShowDialog] = useState(false);
 
   return (
     <LayoutPage>

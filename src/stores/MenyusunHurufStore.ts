@@ -6,11 +6,11 @@ const soal = [
   "SIBI",
   "MAHASISWA",
   "KSULI",
-  // "INFORMATIKA",
-  // "CODING",
-  // "WHATSAPP",
-  // "INSTAGRAM",
-  // "TEMAN",
+  "INFORMATIKA",
+  "CODING",
+  "WHATSAPP",
+  "INSTAGRAM",
+  "TEMAN",
 ];
 
 type MenyusunHurufType = {
