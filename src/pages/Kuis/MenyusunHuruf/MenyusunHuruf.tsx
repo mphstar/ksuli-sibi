@@ -1,11 +1,49 @@
 import LayoutPage from "@/components/templates/LayoutPage";
 import useMenyusunHurufStore from "@/stores/MenyusunHurufStore";
+import useNavbarStore from "@/stores/NavbarStore";
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const MenyusunHuruf = () => {
   const quizStore = useMenyusunHurufStore();
+  const store = useNavbarStore();
+
+  useEffect(() => {
+    store.setNavSelected("kuis");
+  }, []);
+
+  const saveData = async () => {
+    try {
+      await fetch("https://ksuli-api.deno.dev/proses-kuis", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer KSULI_TOKEN_321`,
+        },
+        body: JSON.stringify({
+          kategori_id: "rec_cuum7c5qrj60bgubcjog",
+          person_name: quizStore.name,
+          score: parseInt(quizStore.time.toString()),
+        }),
+      });
+
+      Swal.close();
+    } catch (error) {
+      console.error("Error saving data:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong while saving your data!",
+      });
+    }
+
+    Swal.fire({
+      icon: "success",
+      title: "Kuis telah selesai",
+      text: `Anda menyelesaikan kuis dalam waktu ${quizStore.time} detik`,
+    });
+  };
 
   const shuffleArray = (array: any[]) => {
     for (let i = array.length - 1; i > 0; i--) {
@@ -19,11 +57,7 @@ const MenyusunHuruf = () => {
 
   useEffect(() => {
     if (quizStore.isFinish) {
-      Swal.fire({
-        icon: "success",
-        title: "Kuis telah selesai",
-        text: `Anda menyelesaikan kuis dalam waktu ${quizStore.time} detik`,
-      });
+      saveData();
     }
   }, [quizStore.isFinish]);
 

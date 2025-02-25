@@ -6,7 +6,6 @@ import calcLandmarkList from "@/utils/CalculateLandmark";
 import preProcessLandmark from "@/utils/PreProcessLandmark";
 import { abjads } from "@/utils/ConvertResult";
 import useNavbarStore from "@/stores/NavbarStore";
-import ProgressBar from "@/components/molecules/ProgressBar";
 import { MdOutlineQuiz } from "react-icons/md";
 import useMenyusunHurufStore from "@/stores/MenyusunHurufStore";
 import { useNavigate } from "react-router-dom";
@@ -94,7 +93,6 @@ const Quiz = () => {
     }
   };
 
-  const [progress, setProgress] = useState(0);
   const [answer, setAnswer] = useState("");
 
   let tempAnswer = "";
@@ -196,37 +194,10 @@ const Quiz = () => {
               Swal.showLoading();
             },
           });
-          await saveData(parseInt(answerTime.toString()));
 
           navigate("/kuis/menyusun-huruf/");
         }
       }, 3000);
-    }
-  };
-
-  const saveData = async (time: number) => {
-    try {
-      await fetch("https://ksuli-api.deno.dev/proses-kuis", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer KSULI_TOKEN_321`,
-        },
-        body: JSON.stringify({
-          kategori_id: "rec_cuum7c5qrj60bgubcjog",
-          person_name: quizStore.name,
-          score: time,
-        }),
-      });
-
-      Swal.close();
-    } catch (error) {
-      console.error("Error saving data:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Something went wrong while saving your data!",
-      });
     }
   };
 
@@ -256,10 +227,8 @@ const Quiz = () => {
             makePrediction(finalResult);
           } else {
             setHandPresence(false);
-            setProgress(0);
           }
         } else {
-          setProgress(0);
         }
       }
     }
@@ -316,13 +285,13 @@ const Quiz = () => {
             {!showAnswer && (
               <div className="top-6 left-6 absolute flex flex-col gap-2">
                 <div className="flex gap-2 items-center bg-white text-black rounded-md drop-shadow px-3 py-2">
-                  <h1 className="text-2xl font-semibold text-center">
+                  <h1 className="text-xs md:text-2xl font-semibold text-center">
                     Susun huruf "{quizStore.listSoal[quizStore.soalIndex]}"
                   </h1>
                 </div>
                 {answer.length > 0 && (
                   <div className="flex gap-2 items-center bg-white text-black w-fit rounded-md drop-shadow px-3 py-2">
-                    <h1 className="text-2xl font-semibold text-center">
+                    <h1 className="text-xs md:text-2xl font-semibold text-center">
                       {answer}
                     </h1>
                   </div>
@@ -334,9 +303,7 @@ const Quiz = () => {
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-2">
                     <span className="loader"></span>
-                    <h1>Tahan Tangan..</h1>
                   </div>
-                  <ProgressBar progress={progress} />
                 </div>
               </div>
             )}

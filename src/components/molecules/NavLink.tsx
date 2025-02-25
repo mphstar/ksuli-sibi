@@ -10,7 +10,7 @@ const NavLink = ({ href, name, isActive }: NavLinkProps) => {
     <a href={href}>
       <li
         className={cn(
-          "btn bg-transparent border-none",
+          "btn bg-transparent shadow-none border-none",
           isActive ? "text-primary" : ""
         )}
       >

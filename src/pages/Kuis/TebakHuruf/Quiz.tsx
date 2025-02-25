@@ -4,10 +4,13 @@ import * as tf from "@tensorflow/tfjs";
 import { FilesetResolver, HandLandmarker } from "@mediapipe/tasks-vision";
 import calcLandmarkList from "@/utils/CalculateLandmark";
 import preProcessLandmark from "@/utils/PreProcessLandmark";
-import ConvertResult from "@/utils/ConvertResult";
+import ConvertResult, { abjads } from "@/utils/ConvertResult";
 import useNavbarStore from "@/stores/NavbarStore";
 import ProgressBar from "@/components/molecules/ProgressBar";
 import { MdOutlineQuiz } from "react-icons/md";
+import useTebakHurufStore from "@/stores/TebakHurufStore";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 // type PredictResult = {
 //   abjad: String;
@@ -85,6 +88,9 @@ const Quiz = () => {
 
   let previousResult: string[] = [];
   const [progress, setProgress] = useState(0);
+  let noSoal = 0;
+  let isLoading = false;
+  const navigate = useNavigate();
 
   const makePrediction = async (finalResult: any) => {
     const input = tf.tensor2d([finalResult]);
@@ -127,13 +133,45 @@ const Quiz = () => {
     }
 
     if (previousResult.length == 11) {
+      isLoading = true;
+
+      if (abjads[parseInt(maxKey)] === quizStore.listSoal[noSoal]) {
+        quizStore.addJawaban({
+          jawaban: abjads[parseInt(maxKey)],
+          isCorrect: true,
+        });
+      } else {
+        quizStore.addJawaban({
+          jawaban: abjads[parseInt(maxKey)],
+          isCorrect: false,
+        });
+      }
+
       setShowAnswer(true);
 
-      previousResult = [];
-      setProgress(0);
-
       setTimeout(() => {
+        isLoading = false;
         setShowAnswer(false);
+        setProgress(0);
+        noSoal++;
+        previousResult = [];
+        quizStore.setSoalIndex(noSoal);
+
+        if (noSoal === quizStore.listSoal.length) {
+          quizStore.setSession(false);
+          quizStore.setIsFinish(true);
+
+          Swal.fire({
+            title: "Loading",
+            text: "Proses menyimpan data...",
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            },
+          });
+
+          navigate("/kuis/tebak-huruf");
+        }
       }, 2000);
     }
 
@@ -163,7 +201,9 @@ const Quiz = () => {
             const calt = calcLandmarkList(videoRef.current, landm);
             const finalResult = preProcessLandmark(calt);
 
-            makePrediction(finalResult);
+            if (!isLoading) {
+              makePrediction(finalResult);
+            }
           } else {
             setHandPresence(false);
             setProgress(0);
@@ -179,6 +219,15 @@ const Quiz = () => {
   };
 
   const store = useNavbarStore();
+  const quizStore = useTebakHurufStore();
+
+  console.log(quizStore.jawaban);
+
+  useEffect(() => {
+    if (!quizStore.session) {
+      window.location.href = "/kuis/tebak-huruf";
+    }
+  }, []);
 
   useEffect(() => {
     store.setNavSelected("kuis");
@@ -205,33 +254,48 @@ const Quiz = () => {
         <div className="rounded-md px-3 py-2 text-white flex flex-col justify-center items-center gap-3">
           <img
             className="h-56"
-            src="/assets/gif/salah.gif"
-            alt="Jawaban Salah"
+            src={`/assets/gif/${
+              quizStore.jawaban[quizStore.soalIndex]?.isCorrect
+                ? "betul"
+                : "salah"
+            }.gif`}
+            alt={`Jawaban ${
+              quizStore.jawaban[quizStore.soalIndex]?.isCorrect
+                ? "Benar"
+                : "Salah"
+            }`}
           />
-          <p className="text-center text-6xl font-bold">A</p>
+          <p className="text-center text-6xl font-bold">
+            {quizStore.jawaban[quizStore.soalIndex]?.jawaban}
+          </p>
           <h1 className="text-2xl font-semibold text-center">
-            Jawaban kamu Salah
+            Jawaban kamu{" "}
+            {quizStore.jawaban[quizStore.soalIndex]?.isCorrect
+              ? "Benar"
+              : "Salah"}
           </h1>
         </div>
       </div>
 
       <div className="flex items-center gap-2 mt-4">
         <MdOutlineQuiz size={18} />
-        <h1 className="text-xl font-semibold">Soal: 1 / 10</h1>
+        <h1 className="text-xl font-semibold">
+          Soal: {quizStore.soalIndex + 1} / {quizStore.listSoal.length}
+        </h1>
       </div>
 
       <div className="flex flex-col flex-1 py-4">
         {loadCamera ? (
           <div className="rounded-md overflow-hidden relative">
             {!showAnswer && (
-              <div className="top-6 left-6 absolute flex gap-2 items-center bg-white text-black rounded-md drop-shadow px-3 py-2">
-                <h1 className="text-2xl font-semibold text-center">
-                  Tebak Huruf K
+              <div className="md:top-6 top-3 left-3 md:left-6 absolute flex gap-2 items-center bg-white text-black rounded-md drop-shadow px-3 py-2">
+                <h1 className="md:text-2xl font-semibold text-center">
+                  Tebak Huruf {quizStore.listSoal[quizStore.soalIndex]}
                 </h1>
               </div>
             )}
             {handPresence && !showAnswer && (
-              <div className="top-6 right-6 absolute flex gap-2 items-center bg-white text-black rounded-md drop-shadow px-3 py-2 w-fit">
+              <div className="bottom-3 md:bottom-auto md:top-6 right-3 md:right-6 absolute flex gap-2 items-center bg-white text-black rounded-md drop-shadow px-3 py-2 w-fit">
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-2">
                     <span className="loader"></span>
