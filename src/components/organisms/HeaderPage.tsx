@@ -22,7 +22,7 @@ const HeaderPage = () => {
         </div>
         <ul
           className={cn(
-            "flex md:flex-row flex-col items-center justify-center fixed md:static min-h-svh md:min-h-0 w-full md:w-fit bg-white/50 md:bg-transparent md:backdrop-blur-none backdrop-blur-md z-[999] top-0 left-0",
+            "flex md:flex-row flex-col items-center justify-center fixed md:static min-h-svh md:min-h-0 w-full md:w-fit bg-white/50 md:bg-transparent z-[999] top-0 left-0",
             navStore.isOpen ? "translate-y-0" : "-translate-y-full",
             "duration-300 ease-in-out md:translate-y-0"
           )}

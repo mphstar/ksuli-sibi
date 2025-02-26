@@ -36,6 +36,11 @@ const myRoute = [
     path: "/kuis/menyusun-huruf/app",
     component: lazy(() => import("@/pages/Kuis/MenyusunHuruf/Quiz")),
   },
+  {
+    title: "Ranking",
+    path: "/kuis/ranking",
+    component: lazy(() => import("@/pages/Ranking/Ranking")),
+  },
 ];
 
 export default myRoute;

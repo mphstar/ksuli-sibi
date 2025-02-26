@@ -1,9 +1,10 @@
-import Carousel from "@/components/organisms/Carousel";
+import Carousel from "@/components/organisms/CarouselSusunHuruf";
 import LayoutPage from "@/components/templates/LayoutPage";
 import useMenyusunHurufStore from "@/stores/MenyusunHurufStore";
 import useNavbarStore from "@/stores/NavbarStore";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { HiOutlineHome } from "react-icons/hi";
 import { IoCloseOutline } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -121,7 +122,10 @@ const MenyusunHuruf = () => {
       </AnimatePresence>
       <div className="flex flex-col flex-1 py-4 relative">
         <ul className="flex gap-3 mt-4">
-          <li className="hover:text-primary cursor-default">Home</li>
+          <li className="hover:text-primary cursor-default flex gap-2 items-center">
+            <HiOutlineHome />
+            <p>Home</p>
+          </li>
           <li>{">"}</li>
           <Link to="/kuis" className="hover:text-primary">
             Kuis
@@ -131,10 +135,33 @@ const MenyusunHuruf = () => {
         </ul>
 
         <div className="flex-1 flex flex-col mt-12 md:mt-24 w-full md:w-[500px]">
-          <h1 className="text-5xl font-semibold">
+          <motion.h1
+            initial={{
+              scale: 0,
+              opacity: 0,
+            }}
+            animate={{
+              scale: 1,
+              opacity: 1,
+            }}
+            transition={{
+              delay: 0.2,
+            }}
+            className="text-4xl md:text-5xl font-semibold"
+          >
             Start Your <span className="text-primary">Quiz!</span>
-          </h1>
-          <div className="flex flex-col gap-3 w-full mt-24 md:mt-36">
+          </motion.h1>
+          <motion.div
+            initial={{
+              scale: 0,
+              opacity: 0,
+            }}
+            animate={{
+              scale: 1,
+              opacity: 1,
+            }}
+            className="flex flex-col gap-3 w-full mt-24 md:mt-36"
+          >
             <h1 className="font-semibold text-xl">Masukkan Nama</h1>
             <div className="bg-[#F2F2F2] rounded-full pr-4 flex py-2 items-center">
               <input
@@ -154,13 +181,22 @@ const MenyusunHuruf = () => {
               </button>
             </div>
             <div className="flex items-center gap-2">
-              <span onClick={() => {
-                setShowDialog(true);
-              }} className="text-primary btn btn-link px-0">Cara Bermain</span>
+              <span
+                onClick={() => {
+                  setShowDialog(true);
+                }}
+                className="text-primary btn btn-link px-0"
+              >
+                Cara Bermain
+              </span>
               <span className="text-gray-400">|</span>
-              <span className="text-primary btn btn-link px-0">Lihat Ranking</span>
+              <Link to="/kuis/ranking" className="text-primary">
+                <span className="text-primary btn btn-link px-0">
+                  Lihat Ranking
+                </span>
+              </Link>
             </div>
-          </div>
+          </motion.div>
         </div>
         <img
           className="absolute right-0 md:top-36 bottom-0 pointer-events-none"

@@ -2,6 +2,7 @@ import LayoutPage from "@/components/templates/LayoutPage";
 import useNavbarStore from "@/stores/NavbarStore";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const Kuis = () => {
   const store = useNavbarStore();
@@ -16,7 +17,20 @@ const Kuis = () => {
         <p>Be the first!</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-24 md:gap-6 mt-24 md:mt-52 h-full mb-12">
           <Link to="/kuis/tebak-huruf">
-            <div className="relative ">
+            <motion.div
+              initial={{
+                scale: 0,
+                opacity: 0,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+              }}
+              transition={{
+                delay: 0.1,
+              }}
+              className="relative "
+            >
               <img
                 className="absolute w-24 -top-12 left-4 md:left-12"
                 src="/assets/images/tebak-huruf.png"
@@ -28,10 +42,23 @@ const Kuis = () => {
                 </h1>
                 <p>Tebak huruf dan coba simulasikan</p>
               </div>
-            </div>
+            </motion.div>
           </Link>
           <Link to="/kuis/menyusun-huruf">
-            <div className="relative ">
+            <motion.div
+              initial={{
+                scale: 0,
+                opacity: 0,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+              }}
+              transition={{
+                delay: 0.2,
+              }}
+              className="relative "
+            >
               <img
                 className="absolute w-42 -top-12 left-4 md:left-12"
                 src="/assets/images/menyusun-huruf.png"
@@ -43,7 +70,7 @@ const Kuis = () => {
                 </h1>
                 <p>Susun huruf jadi kata yang tepat</p>
               </div>
-            </div>
+            </motion.div>
           </Link>
         </div>
       </div>

@@ -1,9 +1,13 @@
 import LayoutPage from "@/components/templates/LayoutPage";
 import useNavbarStore from "@/stores/NavbarStore";
 import useTebakHurufStore from "@/stores/TebakHurufStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { HiOutlineHome } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { AnimatePresence, motion } from "framer-motion";
+import Carousel from "@/components/organisms/CarouselTebakHuruf";
+import { IoCloseOutline } from "react-icons/io5";
 
 const TebakHuruf = () => {
   const quizStore = useTebakHurufStore();
@@ -123,11 +127,53 @@ const TebakHuruf = () => {
     };
   }, [quizStore.isFinish]);
 
+  const [showDialog, setShowDialog] = useState(false);
+
   return (
     <LayoutPage>
+      <AnimatePresence>
+        {showDialog && (
+          <motion.div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center z-[999] justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowDialog(false);
+              }
+            }}
+          >
+            <motion.div
+              className="bg-white max-h-[90%] px-8 py-6 rounded-md flex flex-col max-w-[90%] md:min-w-[400px] md:max-w-[400px] w-full"
+              initial={{ scale: 0.5 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.8 }}
+            >
+              <div className="flex gap-2 justify-between items-center pb-8">
+                <h1 className="font-semibold">Cara Bermain</h1>
+                <button
+                  onClick={() => setShowDialog(false)}
+                  className="hover:bg-base-100 p-3 rounded-md"
+                >
+                  <IoCloseOutline />
+                </button>
+              </div>
+
+              <div className="flex flex-col md:flex-row gap-6 overflow-y-auto flex-1">
+                <Carousel />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="flex flex-col flex-1 py-4 relative">
         <ul className="flex gap-3 mt-4">
-          <li className="hover:text-primary cursor-default">Home</li>
+          <li className="hover:text-primary cursor-default flex gap-2 items-center">
+            <HiOutlineHome />
+            <p>Home</p>
+          </li>
           <li>{">"}</li>
           <Link to="/kuis" className="hover:text-primary">
             Kuis
@@ -137,10 +183,33 @@ const TebakHuruf = () => {
         </ul>
 
         <div className="flex-1 flex flex-col mt-12 md:mt-24 w-full md:w-[500px]">
-          <h1 className="text-5xl font-semibold">
+          <motion.h1
+            initial={{
+              scale: 0,
+              opacity: 0,
+            }}
+            animate={{
+              scale: 1,
+              opacity: 1,
+            }}
+            transition={{
+              delay: 0.2,
+            }}
+            className="text-4xl md:text-5xl font-semibold"
+          >
             Start Your <span className="text-primary">Quiz!</span>
-          </h1>
-          <div className="flex flex-col gap-3 w-full mt-24 md:mt-36">
+          </motion.h1>
+          <motion.div
+            initial={{
+              scale: 0,
+              opacity: 0,
+            }}
+            animate={{
+              scale: 1,
+              opacity: 1,
+            }}
+            className="flex flex-col gap-3 w-full mt-24 md:mt-36"
+          >
             <h1 className="font-semibold text-xl">Masukkan Nama</h1>
             <div className="bg-[#F2F2F2] rounded-full pr-4 flex py-2 items-center">
               <input
@@ -159,8 +228,23 @@ const TebakHuruf = () => {
                 Mulai Kuis
               </button>
             </div>
-            <span className="text-primary">Lihat Ranking</span>
-          </div>
+            <div className="flex items-center gap-2">
+              <span
+                onClick={() => {
+                  setShowDialog(true);
+                }}
+                className="text-primary btn btn-link px-0"
+              >
+                Cara Bermain
+              </span>
+              <span className="text-gray-400">|</span>
+              <Link to="/kuis/ranking" className="text-primary">
+                <span className="text-primary btn btn-link px-0">
+                  Lihat Ranking
+                </span>
+              </Link>
+            </div>
+          </motion.div>
         </div>
         <img
           className="absolute right-0 md:top-36 bottom-0 pointer-events-none"

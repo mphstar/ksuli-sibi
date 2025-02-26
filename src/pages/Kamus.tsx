@@ -19,15 +19,29 @@ const Kamus = () => {
         <h1 className="font-semibold">Kamus SIBI</h1>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-6">
           {constantKamus.map((item, index) => (
-            <CardKamus
-              handleClick={() => {
-                setSelectedKamus(item);
-                setShowDialog(true);
-              }}
+            <motion.div
               key={index}
-              title={`Abjad ${item.abjad.toUpperCase()}`}
-              image={`/assets/kamus/${item.abjad}.jpg`}
-            />
+              initial={{
+                scale: 0,
+                opacity: 0,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+              }}
+              transition={{
+                delay: index * 0.1,
+              }}
+            >
+              <CardKamus
+                handleClick={() => {
+                  setSelectedKamus(item);
+                  setShowDialog(true);
+                }}
+                title={`Abjad ${item.abjad.toUpperCase()}`}
+                image={`/assets/kamus/${item.abjad}.jpg`}
+              />
+            </motion.div>
           ))}
         </div>
       </div>
