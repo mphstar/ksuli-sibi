@@ -7,6 +7,7 @@ import calcLandmarkList from "@/utils/CalculateLandmark";
 import preProcessLandmark from "@/utils/PreProcessLandmark";
 import ConvertResult from "@/utils/ConvertResult";
 import useNavbarStore from "@/stores/NavbarStore";
+import { AnimatePresence, motion } from "framer-motion";
 
 type PredictResult = {
   abjad: String;
@@ -37,7 +38,6 @@ const Home = () => {
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
-      
 
       //   setLoadCamera(true);
       await initializeHandDetection();
@@ -138,6 +138,8 @@ const Home = () => {
     requestAnimationFrame(detectHands);
   };
 
+  const [info, setInfo] = useState(true);
+
   const store = useNavbarStore();
 
   useEffect(() => {
@@ -147,7 +149,6 @@ const Home = () => {
     startWebcam();
 
     setLoadCamera(true);
-    
 
     return () => {
       if (handLandmarker) {
@@ -158,6 +159,45 @@ const Home = () => {
 
   return (
     <LayoutPage>
+      <AnimatePresence>
+        {info && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            role="alert"
+            className="alert alert-horizontal mt-4 flex items-center justify-between"
+          >
+            <div className="flex items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                className="stroke-info h-6 w-6 shrink-0"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              <p className="ml-2">
+                Gunakan tangan kanan dan pastikan gambar pada kamera terlihat
+                jelas
+              </p>
+            </div>
+            <button
+              onClick={() => setInfo(false)}
+              className="btn btn-sm btn-outline"
+            >
+              Close
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="flex flex-col flex-1 py-4">
         {loadCamera ? (
           <div className="rounded-md overflow-hidden relative">
