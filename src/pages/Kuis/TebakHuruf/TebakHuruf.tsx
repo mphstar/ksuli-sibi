@@ -95,7 +95,13 @@ const TebakHuruf = () => {
       <p>Jawaban benar: ${benar}</p>
       <p>Jawaban salah: ${salah}</p>
       `,
-    });
+    })
+
+    quizStore.setSession(false);
+    quizStore.setIsFinish(false);
+    quizStore.setName("");
+
+
   };
 
   const router = useNavigate();

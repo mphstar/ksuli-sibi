@@ -46,7 +46,11 @@ const MenyusunHuruf = () => {
       icon: "success",
       title: "Kuis telah selesai",
       text: `Anda menyelesaikan kuis dalam waktu ${quizStore.time} detik`,
-    });
+    })
+
+    quizStore.setSession(false);
+    quizStore.setIsFinish(false);
+    quizStore.setName("");
   };
 
   const shuffleArray = (array: any[]) => {
