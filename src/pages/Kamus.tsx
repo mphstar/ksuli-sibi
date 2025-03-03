@@ -80,7 +80,7 @@ const Kamus = () => {
               <div className="flex flex-col md:flex-row gap-6 overflow-y-auto flex-1">
                 <div className="flex flex-col order-2 md:order-1">
                   <p>{selectedKamus?.keterangan}</p>
-                  <div className="flex flex-wrap gap-2 mt-3">
+                  {/* <div className="flex flex-wrap gap-2 mt-3">
                     {selectedKamus?.badge.map((item, index) => (
                       <span
                         key={index}
@@ -89,7 +89,7 @@ const Kamus = () => {
                         {item}
                       </span>
                     ))}
-                  </div>
+                  </div> */}
                 </div>
                 <img
                   className="h-[250px] object-cover rounded-md order-1 md:order-2"
