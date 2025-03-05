@@ -180,6 +180,8 @@ const Quiz = () => {
         answerTime = answerTime += elapsedTime;
 
         noSoal++;
+        tempAnswer = "";
+        setAnswer("");
 
         if (noSoal === quizStore.listSoal.length) {
           quizStore.setTime(answerTime);

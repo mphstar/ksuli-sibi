@@ -17,6 +17,15 @@ import Swal from "sweetalert2";
 //   acc: String;
 // };
 
+const imagesToPreload = ["/assets/gif/betul.gif", "/assets/gif/salah.gif"];
+
+const preloadImages = () => {
+  imagesToPreload.forEach((src) => {
+    const img = new Image();
+    img.src = src;
+  });
+};
+
 const Quiz = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [loadCamera, setLoadCamera] = useState(false);
@@ -150,8 +159,9 @@ const Quiz = () => {
       setShowAnswer(true);
 
       setTimeout(() => {
-        isLoading = false;
         setShowAnswer(false);
+        
+        isLoading = false;
         setProgress(0);
         noSoal++;
         previousResult = [];
@@ -231,6 +241,7 @@ const Quiz = () => {
 
   useEffect(() => {
     store.setNavSelected("kuis");
+    preloadImages();
 
     loadModel();
     startWebcam();
@@ -249,7 +260,7 @@ const Quiz = () => {
       <div
         className={`fixed inset-0 w-screen h-screen bg-black/60 ${
           showAnswer ? "opacity-100" : "opacity-0"
-        }  z-[999] flex items-center justify-center pointer-events-none duration-300 ease-in-out`}
+        }  z-[999] flex items-center justify-center pointer-events-none  ease-in-out`}
       >
         <div className="rounded-md px-3 py-2 text-white flex flex-col justify-center items-center gap-3">
           <img
@@ -259,6 +270,8 @@ const Quiz = () => {
                 ? "betul"
                 : "salah"
             }.gif`}
+            loading="eager"
+            fetchPriority="high"
             alt={`Jawaban ${
               quizStore.jawaban[quizStore.soalIndex]?.isCorrect
                 ? "Benar"

@@ -33,6 +33,7 @@ const Home = () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
+        
       });
 
       if (videoRef.current) {
