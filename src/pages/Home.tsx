@@ -2,12 +2,14 @@ import LayoutPage from "@/components/templates/LayoutPage";
 import { useEffect, useRef, useState } from "react";
 import { FaCircleCheck } from "react-icons/fa6";
 import * as tf from "@tensorflow/tfjs";
-import { FilesetResolver, HandLandmarker } from "@mediapipe/tasks-vision";
+import { HandLandmarker } from "@mediapipe/tasks-vision";
 import calcLandmarkList from "@/utils/CalculateLandmark";
 import preProcessLandmark from "@/utils/PreProcessLandmark";
 import ConvertResult from "@/utils/ConvertResult";
 import useNavbarStore from "@/stores/NavbarStore";
 import { AnimatePresence, motion } from "framer-motion";
+import { loadTensorFlowModel } from "@/utils/tensorflowModelLoader";
+import { loadHandLandmarker } from "@/utils/handLandmarkerLoader";
 
 type PredictResult = {
   abjad: String;
@@ -50,12 +52,13 @@ const Home = () => {
   const loadModel = async () => {
     setLoadCamera(false);
     try {
-      const lm = await tf.loadLayersModel("/model/model.json");
+      const lm = await loadTensorFlowModel();
       model = lm;
 
-      const emptyInput = tf.tensor2d([[0, 0]]);
+      // const emptyInput = tf.tensor2d([[0, 0]]);
 
-      model.predict(emptyInput) as tf.Tensor;
+      // model.predict(emptyInput) as tf.Tensor;
+      
 
       setLoadCamera(true);
     } catch (error) {
@@ -65,17 +68,8 @@ const Home = () => {
 
   const initializeHandDetection = async () => {
     try {
-      const vision = await FilesetResolver.forVisionTasks(
-        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
-      );
-      handLandmarker = await HandLandmarker.createFromOptions(vision, {
-        baseOptions: {
-          modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
-        },
-        numHands: 2,
-        runningMode: "VIDEO",
-      });
-
+      handLandmarker = await loadHandLandmarker();
+      
       detectHands();
     } catch (error) {
       console.error("Error initializing hand detection:", error);
@@ -117,11 +111,13 @@ const Home = () => {
         performance.now()
       );
 
+      
+
       setHandPresence(detections.handedness.length > 0);
       // Assuming detections.landmarks is an array of landmark objects
       if (detections.landmarks) {
         if (detections.handednesses.length > 0) {
-          console.log(detections);
+          // console.log(detections);
 
           if (detections.handednesses[0][0].displayName === "Right") {
             const landm = detections.landmarks[0].map((landmark) => landmark);
@@ -184,10 +180,7 @@ const Home = () => {
                   d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 ></path>
               </svg>
-              <p className="ml-2">
-                Gunakan tangan kanan dan pastikan gambar pada kamera terlihat
-                jelas
-              </p>
+              <p className="ml-2">Gunakan tangan kanan. Pencahayaan ideal 300 Lux, jarak maksimal 2 meter dari kamera.</p>
             </div>
             <button
               onClick={() => setInfo(false)}

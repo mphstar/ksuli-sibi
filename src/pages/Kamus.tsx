@@ -80,6 +80,12 @@ const Kamus = () => {
               <div className="flex flex-col md:flex-row gap-6 overflow-y-auto flex-1">
                 <div className="flex flex-col order-2 md:order-1">
                   <p>{selectedKamus?.keterangan}</p>
+
+                  <a href="/">
+                    <button className="btn mt-8 bg-slate-900 text-white hover:bg-slate-950 w-fit">
+                      Coba Sekarang
+                    </button>
+                  </a>
                   {/* <div className="flex flex-wrap gap-2 mt-3">
                     {selectedKamus?.badge.map((item, index) => (
                       <span

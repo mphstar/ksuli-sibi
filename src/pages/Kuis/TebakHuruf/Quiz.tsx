@@ -1,7 +1,7 @@
 import LayoutPage from "@/components/templates/LayoutPage";
 import { useEffect, useRef, useState } from "react";
 import * as tf from "@tensorflow/tfjs";
-import { FilesetResolver, HandLandmarker } from "@mediapipe/tasks-vision";
+import { HandLandmarker } from "@mediapipe/tasks-vision";
 import calcLandmarkList from "@/utils/CalculateLandmark";
 import preProcessLandmark from "@/utils/PreProcessLandmark";
 import ConvertResult, { abjads } from "@/utils/ConvertResult";
@@ -11,6 +11,8 @@ import { MdOutlineQuiz } from "react-icons/md";
 import useTebakHurufStore from "@/stores/TebakHurufStore";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { loadTensorFlowModel } from "@/utils/tensorflowModelLoader";
+import { loadHandLandmarker } from "@/utils/handLandmarkerLoader";
 
 // type PredictResult = {
 //   abjad: String;
@@ -63,7 +65,7 @@ const Quiz = () => {
   const loadModel = async () => {
     setLoadCamera(false);
     try {
-      const lm = await tf.loadLayersModel("/model/model.json");
+      const lm = await loadTensorFlowModel();
       model = lm;
 
       const emptyInput = tf.tensor2d([[0, 0]]);
@@ -78,16 +80,7 @@ const Quiz = () => {
 
   const initializeHandDetection = async () => {
     try {
-      const vision = await FilesetResolver.forVisionTasks(
-        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
-      );
-      handLandmarker = await HandLandmarker.createFromOptions(vision, {
-        baseOptions: {
-          modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
-        },
-        numHands: 2,
-        runningMode: "VIDEO",
-      });
+      handLandmarker = await loadHandLandmarker();
 
       detectHands();
     } catch (error) {
@@ -161,11 +154,13 @@ const Quiz = () => {
       setTimeout(() => {
         setShowAnswer(false);
         
-        isLoading = false;
-        setProgress(0);
-        noSoal++;
-        previousResult = [];
-        quizStore.setSoalIndex(noSoal);
+        setTimeout(() => {
+          isLoading = false;
+          setProgress(0);
+          noSoal++;
+          previousResult = [];
+          quizStore.setSoalIndex(noSoal);
+        }, 500);
 
         if (noSoal === quizStore.listSoal.length) {
           quizStore.setSession(false);
@@ -231,7 +226,7 @@ const Quiz = () => {
   const store = useNavbarStore();
   const quizStore = useTebakHurufStore();
 
-  console.log(quizStore.jawaban);
+  // console.log(quizStore.jawaban);
 
   useEffect(() => {
     if (!quizStore.session) {
