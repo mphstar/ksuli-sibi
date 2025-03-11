@@ -153,30 +153,30 @@ const Quiz = () => {
 
       setTimeout(() => {
         setShowAnswer(false);
-        
+
         setTimeout(() => {
           isLoading = false;
           setProgress(0);
           noSoal++;
           previousResult = [];
           quizStore.setSoalIndex(noSoal);
-        }, 500);
 
-        if (noSoal === quizStore.listSoal.length) {
-          quizStore.setSession(false);
-          quizStore.setIsFinish(true);
+          if (noSoal === quizStore.listSoal.length) {
+            quizStore.setSession(false);
+            quizStore.setIsFinish(true);
 
-          Swal.fire({
-            title: "Loading",
-            text: "Proses menyimpan data...",
-            allowOutsideClick: false,
-            didOpen: () => {
-              Swal.showLoading();
-            },
-          });
+            Swal.fire({
+              title: "Loading",
+              text: "Proses menyimpan data...",
+              allowOutsideClick: false,
+              didOpen: () => {
+                Swal.showLoading();
+              },
+            });
 
-          navigate("/kuis/tebak-huruf");
-        }
+            navigate("/kuis/tebak-huruf");
+          }
+        }, 300);
       }, 2000);
     }
 
