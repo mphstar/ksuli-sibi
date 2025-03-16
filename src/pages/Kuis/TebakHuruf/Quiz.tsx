@@ -258,21 +258,27 @@ const Quiz = () => {
         }  z-[999] flex items-center justify-center pointer-events-none  ease-in-out`}
       >
         <div className="rounded-md px-3 py-2 text-white flex flex-col justify-center items-center gap-3">
+        
           <img
-            className="h-56"
-            src={`/assets/gif/${
-              quizStore.jawaban[quizStore.soalIndex]?.isCorrect
-                ? "betul"
-                : "salah"
-            }.gif`}
+            className={`h-56 ${
+              quizStore.jawaban[quizStore.soalIndex]?.isCorrect ? "" : "hidden"
+            }`}
+            src={`/assets/gif/betul.gif`}
             loading="eager"
             fetchPriority="high"
-            alt={`Jawaban ${
-              quizStore.jawaban[quizStore.soalIndex]?.isCorrect
-                ? "Benar"
-                : "Salah"
-            }`}
+            alt={`Jawaban Benar`}
           />
+
+          <img
+            className={`h-56 ${
+              quizStore.jawaban[quizStore.soalIndex]?.isCorrect ? "hidden" : ""
+            }`}
+            src={`/assets/gif/salah.gif`}
+            loading="eager"
+            fetchPriority="high"
+            alt={`Jawaban Salah`}
+          />
+
           <p className="text-center text-6xl font-bold">
             {quizStore.jawaban[quizStore.soalIndex]?.jawaban}
           </p>
