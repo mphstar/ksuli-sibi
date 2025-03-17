@@ -180,7 +180,7 @@ const Home = () => {
                   d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 ></path>
               </svg>
-              <p className="ml-2">Gunakan tangan kanan. Pencahayaan ideal 300 Lux, jarak maksimal 2 meter dari kamera.</p>
+              <p className="ml-2">Gunakan tangan kanan. Pencahayaan ideal 120 Lux, jarak maksimal 2 meter dari kamera.</p>
             </div>
             <button
               onClick={() => setInfo(false)}
