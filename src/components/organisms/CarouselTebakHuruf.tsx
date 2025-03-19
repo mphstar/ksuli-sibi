@@ -12,7 +12,7 @@ const slides = [
   {
     title: "Tebak Huruf",
     description:
-      "Tebak huruf sesuai soal yang ditampilkan. Ini adalah latihan untuk meningkatkan keterampilan kognitif dan kecepatan berpikir Anda.",
+      "Tebak huruf sesuai soal yang ditampilkan.",
     image: "/assets/images/susun_2.svg",
     button: "Next",
   },
@@ -59,7 +59,7 @@ export default function Carousel() {
               >
                 <img src={slide.image} alt={slide.title} className="h-60" />
                 {/* <h2 className="mt-4 text-xl font-bold">{slide.title}</h2> */}
-                <p className="mt-8 text-gray-500 text-sm">
+                <p className="mt-8 text-gray-800 text-sm">
                   {slide.description}
                 </p>
                 {/* <button

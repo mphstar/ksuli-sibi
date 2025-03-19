@@ -12,21 +12,21 @@ const slides = [
   {
     title: "Gerakan",
     description:
-      "Gerakkan tangan Anda di depan kamera untuk melanjutkan. Sistem akan mendeteksi gerakan Anda untuk navigasi tanpa sentuhan.",
-    image: "/assets/images/susun_2.svg",
+      "Gerakkan tangan Anda di depan kamera. Sistem akan mendeteksi gerakan Anda.",
+    image: "/assets/images/susun_5.svg",
     button: "Next",
   },
   {
     title: "Susun abjad",
     description:
-      "Susun huruf-huruf menjadi kata yang benar. Ini adalah latihan untuk meningkatkan keterampilan kognitif dan kecepatan berpikir Anda.",
-    image: "/assets/images/susun_3.svg",
+      "Susun huruf-huruf menjadi kata pada soal.",
+    image: "/assets/images/susun_6.svg",
     button: "Next",
   },
   {
     title: "Score",
     description:
-      "Selesaikan tugas dengan cepat untuk mendapatkan skor tertinggi. Skor Anda akan dibandingkan dengan pengguna lain di papan peringkat.",
+      "Selesaikan soal dengan cepat untuk mendapatkan skor tertinggi. Skor Anda akan dibandingkan dengan pengguna lain di papan peringkat.",
     image: "/assets/images/susun_4.svg",
     button: "Get Started",
   },
@@ -63,7 +63,7 @@ export default function Carousel() {
                   className="h-60"
                 />
                 {/* <h2 className="mt-4 text-xl font-bold">{slide.title}</h2> */}
-                <p className="mt-8 text-gray-500 text-sm">
+                <p className="mt-8 text-gray-800 text-sm">
                   {slide.description}
                 </p>
                 {/* <button
