@@ -23,9 +23,14 @@ export const abjads = [
   "W",
   "X",
   "Y",
+  "Tidak Dikenali",
 ];
 
 const ConvertResult = (result: number) => {
+  if (result < 0 || result > 23) {
+    return "Tidak Dikenali";
+  }
+
   return `Abjad ${abjads[result]}`;
 };
 
